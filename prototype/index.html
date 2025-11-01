@@ -6,7 +6,7 @@
     <title>Trainer Recruitment - Pokemon Blue</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        /* Navigation & UX v48 - iOS standalone wrapper container fix (iframe viewport emulation) - 2025-11-01 */
+        /* Navigation & UX v43 - Mobile text wrapping fix (standalone + iframe) - 2025-11-01 */
         
         * {
             margin: 0;
@@ -72,6 +72,32 @@
                 -webkit-transform: scale(0.58);
                 transform-origin: center center;
                 -webkit-transform-origin: center center;
+            }
+        }
+        
+        /* MOBILE TEXT WRAPPING FIX */
+        /* Applies to all mobile devices - fixes iOS standalone issue */
+        /* Android already works correctly, so these properties won't break it */
+        @media (max-width: 450px) {
+            
+            .menu-box div,
+            .menu-box p,
+            .menu-box strong,
+            .stats-box div,
+            .stats-box span,
+            .text-box,
+            .text-box p,
+            .help-page div,
+            .help-page strong,
+            .menu-item {
+                word-wrap: break-word;        /* Fallback for older browsers */
+                overflow-wrap: break-word;    /* Modern standard */
+                -webkit-hyphens: auto;
+                hyphens: auto;
+            }
+            
+            .screen-content {
+                overflow: hidden;
             }
         }
         
@@ -2915,67 +2941,6 @@
         
         // Ensure gameState is globally accessible for console debugging
         window.gameState = gameState;
-        
-        // ========================================
-        // iOS STANDALONE WRAPPER CONTAINER FIX
-        // ========================================
-        // Create a wrapper container that mimics the iframe's 520x720 viewport
-        // This forces iOS WebKit to calculate text layout as if in an iframe
-        (function() {
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isStandalone = window.self === window.top;
-            const isMobile = window.innerWidth <= 450;
-            
-            // Only apply to iOS standalone on mobile
-            if (!isIOS || !isStandalone || !isMobile) {
-                return;
-            }
-            
-            console.log('iOS Standalone detected - applying wrapper container fix');
-            
-            // Wait for DOM to be ready
-            function applyWrapperFix() {
-                const scaleWrapper = document.querySelector('.scale-wrapper');
-                
-                if (!scaleWrapper) {
-                    console.error('scale-wrapper not found');
-                    return;
-                }
-                
-                // Create a container that mimics the iframe viewport (520x720)
-                const viewportWrapper = document.createElement('div');
-                viewportWrapper.style.width = '520px';
-                viewportWrapper.style.height = '720px';
-                viewportWrapper.style.maxWidth = '520px';
-                viewportWrapper.style.maxHeight = '720px';
-                viewportWrapper.style.margin = '0 auto';
-                viewportWrapper.style.overflow = 'hidden';
-                viewportWrapper.style.position = 'relative';
-                viewportWrapper.style.background = 'transparent';
-                
-                // Insert the wrapper before scale-wrapper and move scale-wrapper inside it
-                const parent = scaleWrapper.parentNode;
-                parent.insertBefore(viewportWrapper, scaleWrapper);
-                viewportWrapper.appendChild(scaleWrapper);
-                
-                // Ensure body layout is centered
-                document.body.style.display = 'flex';
-                document.body.style.justifyContent = 'center';
-                document.body.style.alignItems = 'center';
-                document.body.style.minHeight = '100vh';
-                document.body.style.padding = '20px';
-                document.body.style.boxSizing = 'border-box';
-                
-                console.log('iOS Standalone wrapper container fix applied successfully');
-            }
-            
-            // Apply fix when DOM is ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', applyWrapperFix);
-            } else {
-                applyWrapperFix();
-            }
-        })();
     </script>
 </body>
 </html>
