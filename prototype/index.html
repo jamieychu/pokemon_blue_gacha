@@ -905,10 +905,7 @@
                     isInIframe, 
                     isMobile, 
                     viewportWidth,
-                    windowInnerWidth: window.innerWidth,
-                    docClientWidth: document.documentElement.clientWidth,
                     isIOS,
-                    isIOSChrome,
                     userAgent: navigator.userAgent.substring(0, 50) + '...'
                 });
                 
@@ -916,15 +913,14 @@
                     document.body.classList.add('mobile-standalone');
                     console.log('✅ Added mobile-standalone class');
                     
-                    // For iOS devices, directly apply inline styles to ensure they work
+                    // For iOS devices, apply margin-top WITHOUT touching transform
+                    // The transform is handled by CSS media query and should not be overridden
                     if (isIOS) {
                         const scaleWrapper = document.querySelector('.scale-wrapper');
                         if (scaleWrapper) {
-                            // Use margin-top for iOS (most reliable method)
+                            // ONLY set margin-top, don't touch transform at all
                             scaleWrapper.style.marginTop = '-120px';
-                            scaleWrapper.style.transform = 'scale(0.58)';
-                            scaleWrapper.style.webkitTransform = 'scale(0.58)';
-                            console.log('🍎 iOS detected: Applied inline styles to .scale-wrapper');
+                            console.log('🍎 iOS detected: Applied marginTop to .scale-wrapper (transform untouched)');
                         }
                     }
                     
@@ -933,12 +929,10 @@
                 } else {
                     document.body.classList.remove('mobile-standalone');
                     
-                    // Remove inline styles if they were applied
+                    // Remove iOS-specific styles
                     const scaleWrapper = document.querySelector('.scale-wrapper');
-                    if (scaleWrapper) {
+                    if (scaleWrapper && isIOS) {
                         scaleWrapper.style.marginTop = '';
-                        scaleWrapper.style.transform = '';
-                        scaleWrapper.style.webkitTransform = '';
                     }
                     console.log('❌ Removed mobile-standalone class');
                 }
