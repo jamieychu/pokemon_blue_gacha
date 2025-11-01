@@ -892,70 +892,20 @@
                 const isInIframe = window.self !== window.top;
                 const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
                 const isMobile = viewportWidth <= 450;
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
                 
-                // For debugging on actual device
-                console.log('🔍 Mobile detection:', { 
-                    isInIframe, 
-                    isMobile, 
-                    viewportWidth,
-                    isIOS,
-                    userAgent: navigator.userAgent.substring(0, 50) + '...'
-                });
+                console.log('🔍 Detection:', { isInIframe, isMobile, viewportWidth });
                 
                 if (!isInIframe && isMobile) {
                     document.body.classList.add('mobile-standalone');
-                    console.log('✅ Added mobile-standalone class');
-                    
-                    if (isIOS) {
-                        // iOS: Hide the Exit button entirely
-                        // iOS users can use browser's back button or swipe gesture
-                        const exitButton = document.querySelector('.exit-fullscreen-btn');
-                        if (exitButton) {
-                            exitButton.style.display = 'none';
-                            console.log('🍎 iOS: Hidden Exit button (use browser back button instead)');
-                        }
-                        // Don't touch Game Boy position at all - keep it natural
-                    } else {
-                        // Non-iOS (Android): Show button and move Game Boy up
-                        const scaleWrapper = document.querySelector('.scale-wrapper');
-                        if (scaleWrapper) {
-                            scaleWrapper.style.marginTop = '-100px';
-                            console.log('🤖 Android: Applied marginTop to Game Boy');
-                        }
-                    }
-                    
-                    // Force a reflow to ensure styles are applied
-                    void document.body.offsetHeight;
+                    console.log('✅ Added mobile-standalone class (no other modifications)');
                 } else {
                     document.body.classList.remove('mobile-standalone');
-                    
-                    // Remove device-specific styles
-                    const exitButton = document.querySelector('.exit-fullscreen-btn');
-                    const scaleWrapper = document.querySelector('.scale-wrapper');
-                    
-                    if (exitButton) {
-                        exitButton.style.display = '';
-                        exitButton.style.bottom = '';
-                    }
-                    if (scaleWrapper) scaleWrapper.style.marginTop = '';
-                    
-                    console.log('❌ Removed mobile-standalone class');
                 }
             }
             
-            // Check immediately
             checkAndApplyMobileStandalone();
-            
-            // Re-check on window resize in case orientation changes
             window.addEventListener('resize', checkAndApplyMobileStandalone);
-            
-            // Also check on load to catch any timing issues
             window.addEventListener('load', checkAndApplyMobileStandalone);
-            
-            // Extra check after a short delay for iOS (address bar transitions)
-            setTimeout(checkAndApplyMobileStandalone, 100);
-            setTimeout(checkAndApplyMobileStandalone, 500);
         })();
         
         // Game State - Made globally accessible for testing
