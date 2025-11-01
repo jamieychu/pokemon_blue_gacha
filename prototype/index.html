@@ -6,7 +6,7 @@
     <title>Trainer Recruitment - Pokemon Blue</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        /* Navigation & UX v47 - iOS standalone dimension fix (matches iframe viewport) - 2025-11-01 */
+        /* Navigation & UX v48 - iOS standalone wrapper container fix (iframe viewport emulation) - 2025-11-01 */
         
         * {
             margin: 0;
@@ -2917,10 +2917,10 @@
         window.gameState = gameState;
         
         // ========================================
-        // iOS STANDALONE DIMENSION FIX
+        // iOS STANDALONE WRAPPER CONTAINER FIX
         // ========================================
-        // Force standalone iOS to use the same 520x720 viewport as iframe
-        // This makes iOS WebKit calculate text layout identically in both contexts
+        // Create a wrapper container that mimics the iframe's 520x720 viewport
+        // This forces iOS WebKit to calculate text layout as if in an iframe
         (function() {
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             const isStandalone = window.self === window.top;
@@ -2931,10 +2931,10 @@
                 return;
             }
             
-            console.log('iOS Standalone detected - applying dimension fix');
+            console.log('iOS Standalone detected - applying wrapper container fix');
             
             // Wait for DOM to be ready
-            function applyDimensionFix() {
+            function applyWrapperFix() {
                 const scaleWrapper = document.querySelector('.scale-wrapper');
                 
                 if (!scaleWrapper) {
@@ -2942,15 +2942,23 @@
                     return;
                 }
                 
-                // Force the same dimensions as the iframe (520x720)
-                scaleWrapper.style.width = '520px';
-                scaleWrapper.style.height = '720px';
-                scaleWrapper.style.maxWidth = '520px';
-                scaleWrapper.style.maxHeight = '720px';
-                scaleWrapper.style.margin = '0 auto';
-                scaleWrapper.style.position = 'relative';
+                // Create a container that mimics the iframe viewport (520x720)
+                const viewportWrapper = document.createElement('div');
+                viewportWrapper.style.width = '520px';
+                viewportWrapper.style.height = '720px';
+                viewportWrapper.style.maxWidth = '520px';
+                viewportWrapper.style.maxHeight = '720px';
+                viewportWrapper.style.margin = '0 auto';
+                viewportWrapper.style.overflow = 'hidden';
+                viewportWrapper.style.position = 'relative';
+                viewportWrapper.style.background = 'transparent';
                 
-                // Also ensure body doesn't interfere
+                // Insert the wrapper before scale-wrapper and move scale-wrapper inside it
+                const parent = scaleWrapper.parentNode;
+                parent.insertBefore(viewportWrapper, scaleWrapper);
+                viewportWrapper.appendChild(scaleWrapper);
+                
+                // Ensure body layout is centered
                 document.body.style.display = 'flex';
                 document.body.style.justifyContent = 'center';
                 document.body.style.alignItems = 'center';
@@ -2958,14 +2966,14 @@
                 document.body.style.padding = '20px';
                 document.body.style.boxSizing = 'border-box';
                 
-                console.log('iOS Standalone dimension fix applied successfully');
+                console.log('iOS Standalone wrapper container fix applied successfully');
             }
             
             // Apply fix when DOM is ready
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', applyDimensionFix);
+                document.addEventListener('DOMContentLoaded', applyWrapperFix);
             } else {
-                applyDimensionFix();
+                applyWrapperFix();
             }
         })();
     </script>
