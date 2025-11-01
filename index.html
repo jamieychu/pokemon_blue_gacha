@@ -251,8 +251,8 @@
             opacity: 0.85;
         }
         
-        /* Hide on desktop - only show on mobile/tablet */
-        @media (min-width: 769px) {
+        /* Hide button on desktop two-column layout - show only on mobile stacked layout */
+        @media (min-width: 1025px) {
             .desktop-notice {
                 display: none !important;
             }
@@ -1253,8 +1253,8 @@
             }
         }
         
-        /* Desktop: Hide modal completely */
-        @media (min-width: 769px) {
+        /* Desktop two-column layout: Hide modal completely */
+        @media (min-width: 1025px) {
             .prototype-modal {
                 display: none !important;
             }
@@ -1266,11 +1266,19 @@
     </style>
     
     <script>
-        // MOBILE-ONLY: Modal functionality (production version - no debug code)
+        // MODAL FUNCTIONALITY: Show on stacked layout (mobile/tablet ≤1024px)
         document.addEventListener('DOMContentLoaded', function() {
-            const isMobile = window.innerWidth <= 768;
+            // Check if device is in stacked layout (matches CSS breakpoint at 1024px)
+            function shouldShowModal() {
+                const width = window.innerWidth;
+                
+                // Show modal only in stacked layout (≤ 1024px)
+                // This matches the CSS breakpoint where layout switches to column
+                return width <= 1024;
+            }
             
-            if (!isMobile) {
+            // Initialize only if modal should be shown
+            if (!shouldShowModal()) {
                 return;
             }
             
@@ -1338,6 +1346,19 @@
                 if (e.key === 'Escape' && modal.classList.contains('active')) {
                     closeModal();
                 }
+            });
+            
+            // Handle window resize (orientation changes, window resizing)
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                // Debounce resize events
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    // If modal is active and we switch to a size that shouldn't have modal, close it
+                    if (modal.classList.contains('active') && !shouldShowModal()) {
+                        closeModal();
+                    }
+                }, 250);
             });
         });
     </script>
