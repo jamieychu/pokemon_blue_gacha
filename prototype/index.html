@@ -1761,6 +1761,57 @@
             return 0; // Default to first page if not found
         }
         
+        function findTrainerIndexOnPage(trainerId, pageNum) {
+            // Find the trainer's index within their registry page
+            // Page structure:
+            // Page 0: Base (1) + Ultra-Rare Part 1 (2) = 3 total
+            // Page 1: Ultra-Rare Part 2 (3) = 3 total
+            // Pages 2-4: Rare (4 each)
+            // Pages 5-9: Common (4 each)
+            
+            let index = 0;
+            
+            if (pageNum === 0) {
+                // Page 0: Base (1) + Ultra-Rare Part 1 (2)
+                if (trainers.base.some(t => t.id === trainerId)) {
+                    return 0; // Red is first
+                }
+                // Check first 2 Ultra-Rare
+                const ultraRareSlice = trainers.ultraRare.slice(0, 2);
+                const foundIndex = ultraRareSlice.findIndex(t => t.id === trainerId);
+                if (foundIndex !== -1) {
+                    return 1 + foundIndex; // After base trainer
+                }
+            } else if (pageNum === 1) {
+                // Page 1: Ultra-Rare Part 2 (3 trainers)
+                const ultraRareSlice = trainers.ultraRare.slice(2, 5);
+                const foundIndex = ultraRareSlice.findIndex(t => t.id === trainerId);
+                if (foundIndex !== -1) {
+                    return foundIndex;
+                }
+            } else if (pageNum >= 2 && pageNum <= 4) {
+                // Pages 2-4: Rare trainers (4 per page, except page 4 has 2)
+                const startIndex = (pageNum - 2) * 4;
+                const endIndex = pageNum === 4 ? startIndex + 2 : startIndex + 4;
+                const rareSlice = trainers.rare.slice(startIndex, endIndex);
+                const foundIndex = rareSlice.findIndex(t => t.id === trainerId);
+                if (foundIndex !== -1) {
+                    return foundIndex;
+                }
+            } else if (pageNum >= 5 && pageNum <= 9) {
+                // Pages 5-9: Common trainers (4 per page)
+                const startIndex = (pageNum - 5) * 4;
+                const endIndex = startIndex + 4;
+                const commonSlice = trainers.common.slice(startIndex, endIndex);
+                const foundIndex = commonSlice.findIndex(t => t.id === trainerId);
+                if (foundIndex !== -1) {
+                    return foundIndex;
+                }
+            }
+            
+            return 0; // Default to first item if not found
+        }
+        
         function showTrainerRegistry() {
         
             // Only reset to first page and first item when entering from outside registry
@@ -2530,6 +2581,7 @@
                             const navigateToRegistry = () => {
                                 gameState.currentScreen = 'registry';
                                 gameState.currentPage = pageNum;
+                                gameState.selectedTrainerIndex = findTrainerIndexOnPage(trainerId, pageNum);
                                 showTrainerRegistry();
                             };
                             
@@ -2557,6 +2609,7 @@
                             // No notification needed, go directly to registry
                             gameState.currentScreen = 'registry';
                             gameState.currentPage = pageNum;
+                            gameState.selectedTrainerIndex = findTrainerIndexOnPage(trainerId, pageNum);
                             showTrainerRegistry();
                         }
                         return;
@@ -2607,7 +2660,9 @@
             
             // Check if trainer is collected (not locked)
             if (selectedItem.classList.contains('locked')) {
-                showNotification('TRAINER LOCKED', 'You have not recruited this trainer yet!', null);
+                showNotification('TRAINER LOCKED', 'You have not recruited this trainer yet!', () => {
+                    showTrainerRegistry();
+                });
                 return;
             }
             
