@@ -32,7 +32,7 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            display: inline-block;
+            display: none; /* Hidden by default, shown via JS on mobile standalone only */
             color: #0f380f;
             background: #e0d8a0;
             padding: 8px 16px;
@@ -49,6 +49,11 @@
             z-index: 1000;
         }
         
+        /* Show button only when body has mobile-standalone class */
+        body.mobile-standalone .exit-fullscreen-btn {
+            display: inline-block;
+        }
+        
         .exit-fullscreen-btn:hover {
             opacity: 0.85;
         }
@@ -56,6 +61,11 @@
         .scale-wrapper {
             transform: scale(0.78);
             transform-origin: center center;
+        }
+        
+        /* Shift Game Boy up on mobile standalone to accommodate Exit button with spacing */
+        body.mobile-standalone .scale-wrapper {
+            margin-top: -40px;
         }
         
         /* Responsive scaling for mobile - triggered when iframe is 390px or less */
@@ -875,6 +885,29 @@
     </a>
 
     <script>
+        // Detect if page is standalone (not in iframe) and on mobile
+        // Only show Exit Fullscreen button in this case
+        (function() {
+            const isInIframe = window.self !== window.top;
+            const isMobile = window.innerWidth <= 450;
+            
+            if (!isInIframe && isMobile) {
+                document.body.classList.add('mobile-standalone');
+            }
+            
+            // Re-check on window resize in case orientation changes
+            window.addEventListener('resize', function() {
+                const isInIframe = window.self !== window.top;
+                const isMobile = window.innerWidth <= 450;
+                
+                if (!isInIframe && isMobile) {
+                    document.body.classList.add('mobile-standalone');
+                } else {
+                    document.body.classList.remove('mobile-standalone');
+                }
+            });
+        })();
+        
         // Game State - Made globally accessible for testing
         const gameState = {
             recruitPts: 21000,
