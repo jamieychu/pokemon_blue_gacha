@@ -1215,8 +1215,17 @@
     <script>
         // MOBILE-ONLY: Modal functionality
         // Desktop is completely unaffected
-        (function() {
+        document.addEventListener('DOMContentLoaded', function() {
             const isMobile = window.innerWidth <= 768;
+            
+            // VISIBLE DEBUG: Show detection status (remove after testing)
+            if (isMobile) {
+                const debugBadge = document.createElement('div');
+                debugBadge.style.cssText = 'position: fixed; bottom: 10px; left: 10px; background: lime; color: black; padding: 5px 10px; border-radius: 5px; font-size: 12px; z-index: 99999; font-family: monospace;';
+                debugBadge.textContent = '✓ Mobile Modal Active';
+                document.body.appendChild(debugBadge);
+                setTimeout(() => debugBadge.remove(), 3000);
+            }
             
             if (!isMobile) {
                 return; // Exit immediately on desktop
@@ -1228,6 +1237,11 @@
             const fullscreenLink = document.querySelector('.desktop-notice a');
             
             if (!modal || !modalIframe || !closeBtn || !fullscreenLink) {
+                // VISIBLE DEBUG: Show error
+                const errorBadge = document.createElement('div');
+                errorBadge.style.cssText = 'position: fixed; bottom: 10px; left: 10px; background: red; color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; z-index: 99999;';
+                errorBadge.textContent = '✗ Modal elements missing';
+                document.body.appendChild(errorBadge);
                 return;
             }
             
@@ -1261,7 +1275,7 @@
                     closeModal();
                 }
             });
-        })();
+        });
     </script>
 </body>
 </html>
