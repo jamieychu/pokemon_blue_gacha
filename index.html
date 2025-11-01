@@ -1296,15 +1296,15 @@
             fullscreenLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 
-                // VISIBLE DEBUG: Show click detected
+                // VISIBLE DEBUG: Show click detected (shorter duration)
                 const clickBadge = document.createElement('div');
                 clickBadge.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: orange; color: black; padding: 20px; border-radius: 10px; font-size: 16px; z-index: 99999; font-weight: bold;';
                 clickBadge.textContent = 'Click detected! Opening modal...';
                 document.body.appendChild(clickBadge);
-                setTimeout(() => clickBadge.remove(), 2000);
+                setTimeout(() => clickBadge.remove(), 800); // Faster removal
                 
-                // Set iframe source
-                modalIframe.src = 'prototype/';
+                // Set iframe source - use absolute path
+                modalIframe.src = window.location.origin + window.location.pathname.replace('index.html', '') + 'prototype/';
                 
                 // Aggressively show modal with inline styles to override everything
                 modal.style.display = 'block';
@@ -1319,7 +1319,7 @@
                 // Prevent background scrolling
                 document.body.style.overflow = 'hidden';
                 
-                // VISIBLE DEBUG: Show modal state
+                // VISIBLE DEBUG: Show modal state (keep for now)
                 setTimeout(() => {
                     const stateBadge = document.createElement('div');
                     stateBadge.style.cssText = 'position: fixed; top: 10px; left: 10px; background: blue; color: white; padding: 10px; border-radius: 5px; font-size: 12px; z-index: 99999;';
@@ -1331,8 +1331,21 @@
             
             // Close modal function
             function closeModal() {
+                // Remove active class first
                 modal.classList.remove('active');
-                document.body.style.overflow = ''; // Restore scrolling
+                
+                // Reset inline styles
+                modal.style.display = '';
+                modal.style.position = '';
+                modal.style.top = '';
+                modal.style.left = '';
+                modal.style.width = '';
+                modal.style.height = '';
+                modal.style.zIndex = '';
+                
+                // Restore scrolling
+                document.body.style.overflow = '';
+                
                 // Clear iframe src to stop any running scripts
                 setTimeout(() => {
                     modalIframe.src = '';
