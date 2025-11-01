@@ -6,7 +6,7 @@
     <title>Trainer Recruitment - Pokemon Blue</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        /* Navigation & UX v41 - Updated common trainers list to Gen 1 trainer classes - 2025-10-31 */
+        /* Navigation & UX v42 - iOS WebKit text wrapping fix - 2025-11-01 */
         
         * {
             margin: 0;
@@ -72,6 +72,59 @@
                 -webkit-transform: scale(0.58);
                 transform-origin: center center;
                 -webkit-transform-origin: center center;
+            }
+        }
+        
+        /* iOS-SPECIFIC TEXT WRAPPING FIX */
+        /* Targets ONLY iOS WebKit on mobile - Desktop and Android unaffected */
+        @supports (-webkit-touch-callout: none) {
+            @media (max-width: 450px) {
+                
+                /* Menu boxes (Trainer Recruitment, FAQ, Rates, History) */
+                .menu-box div,
+                .menu-box p,
+                .menu-box strong {
+                    word-wrap: break-word;        /* Fallback for older browsers */
+                    overflow-wrap: break-word;    /* Modern standard */
+                    -webkit-hyphens: auto;
+                    hyphens: auto;
+                }
+                
+                /* Stats displays */
+                .stats-box div,
+                .stats-box span {
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                }
+                
+                /* Text boxes and dialogs */
+                .text-box,
+                .text-box p {
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                    -webkit-hyphens: auto;
+                    hyphens: auto;
+                }
+                
+                /* FAQ/Help pages */
+                .help-page div,
+                .help-page strong {
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                    -webkit-hyphens: auto;
+                    hyphens: auto;
+                }
+                
+                /* Menu items */
+                .menu-item {
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                }
+                
+                /* Ensure screen content respects boundaries */
+                .screen-content {
+                    overflow: hidden;
+                }
             }
         }
         
