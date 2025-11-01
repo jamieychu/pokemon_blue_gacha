@@ -64,8 +64,10 @@
         }
         
         /* Shift Game Boy up on mobile standalone to accommodate Exit button with spacing */
+        /* Using translateY instead of margin to avoid affecting internal content layout */
         body.mobile-standalone .scale-wrapper {
-            margin-top: -40px;
+            transform: scale(0.58) translateY(-60px);
+            transform-origin: center center;
         }
         
         /* Responsive scaling for mobile - triggered when iframe is 390px or less */
