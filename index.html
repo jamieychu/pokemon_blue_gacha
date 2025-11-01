@@ -1210,6 +1210,33 @@
                 display: none !important;
             }
         }
+        
+        /* Mobile: Ensure fullscreen link is visible and clickable */
+        @media (max-width: 768px) {
+            .desktop-notice {
+                display: block !important;
+                position: relative;
+                z-index: 100;
+                margin: 20px 0;
+                text-align: center;
+            }
+            
+            .desktop-notice a {
+                display: inline-block;
+                padding: 12px 24px;
+                background: #fbbf24;
+                color: #1a1f36;
+                text-decoration: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                touch-action: manipulation;
+            }
+            
+            .desktop-notice a:active {
+                background: #f59e0b;
+            }
+        }
     </style>
     
     <script>
@@ -1248,6 +1275,14 @@
             // Open modal on fullscreen link click
             fullscreenLink.addEventListener('click', function(e) {
                 e.preventDefault();
+                
+                // VISIBLE DEBUG: Show click detected
+                const clickBadge = document.createElement('div');
+                clickBadge.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: orange; color: black; padding: 20px; border-radius: 10px; font-size: 16px; z-index: 99999; font-weight: bold;';
+                clickBadge.textContent = 'Click detected! Opening modal...';
+                document.body.appendChild(clickBadge);
+                setTimeout(() => clickBadge.remove(), 2000);
+                
                 modalIframe.src = 'prototype/';
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden'; // Prevent background scrolling
