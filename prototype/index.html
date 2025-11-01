@@ -65,13 +65,24 @@
             -webkit-transform-origin: center center;
         }
         
-        /* Responsive scaling for mobile - triggered when iframe is 390px or less */
+        /* Responsive scaling for mobile - use zoom instead of transform for iOS WebKit */
         @media (max-width: 450px) {
             .scale-wrapper {
-                transform: scale(0.58);
-                -webkit-transform: scale(0.58);
+                /* Use zoom for better iOS compatibility with text layout */
+                zoom: 0.58;
+                -moz-transform: scale(0.58); /* Firefox doesn't support zoom */
                 transform-origin: center center;
-                -webkit-transform-origin: center center;
+            }
+            
+            /* Fallback for Firefox which doesn't support zoom */
+            @supports not (zoom: 1) {
+                .scale-wrapper {
+                    zoom: initial;
+                    transform: scale(0.58);
+                    -webkit-transform: scale(0.58);
+                    transform-origin: center center;
+                    -webkit-transform-origin: center center;
+                }
             }
         }
         
@@ -892,14 +903,29 @@
                 const isInIframe = window.self !== window.top;
                 const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
                 const isMobile = viewportWidth <= 450;
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
                 
-                console.log('🔍 Detection:', { isInIframe, isMobile, viewportWidth });
+                console.log('🔍 Detection:', { isInIframe, isMobile, viewportWidth, isIOS });
                 
                 if (!isInIframe && isMobile) {
                     document.body.classList.add('mobile-standalone');
-                    console.log('✅ Added mobile-standalone class (no other modifications)');
+                    console.log('✅ Mobile standalone mode');
+                    
+                    // On iOS, hide the Exit button to avoid overlap
+                    // iOS users can use browser back button or swipe gesture
+                    if (isIOS) {
+                        const exitButton = document.querySelector('.exit-fullscreen-btn');
+                        if (exitButton) {
+                            exitButton.style.display = 'none';
+                            console.log('🍎 iOS: Hidden Exit button (use browser navigation)');
+                        }
+                    }
                 } else {
                     document.body.classList.remove('mobile-standalone');
+                    
+                    // Restore button visibility if hidden
+                    const exitButton = document.querySelector('.exit-fullscreen-btn');
+                    if (exitButton) exitButton.style.display = '';
                 }
             }
             
