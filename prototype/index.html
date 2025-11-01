@@ -2660,7 +2660,13 @@
             
             // Check if trainer is collected (not locked)
             if (selectedItem.classList.contains('locked')) {
+                // Preserve current page and selection to return to same spot
+                const currentPage = gameState.currentPage;
+                const currentIndex = gameState.selectedTrainerIndex;
                 showNotification('TRAINER LOCKED', 'You have not recruited this trainer yet!', () => {
+                    gameState.currentPage = currentPage;
+                    gameState.selectedTrainerIndex = currentIndex;
+                    gameState.currentScreen = 'registry';
                     showTrainerRegistry();
                 });
                 return;
