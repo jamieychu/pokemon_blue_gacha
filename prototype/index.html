@@ -65,24 +65,13 @@
             -webkit-transform-origin: center center;
         }
         
-        /* Responsive scaling for mobile - use zoom instead of transform for iOS WebKit */
+        /* Responsive scaling for mobile - triggered when iframe is 390px or less */
         @media (max-width: 450px) {
             .scale-wrapper {
-                /* Use zoom for better iOS compatibility with text layout */
-                zoom: 0.58;
-                -moz-transform: scale(0.58); /* Firefox doesn't support zoom */
+                transform: scale(0.58);
+                -webkit-transform: scale(0.58);
                 transform-origin: center center;
-            }
-            
-            /* Fallback for Firefox which doesn't support zoom */
-            @supports not (zoom: 1) {
-                .scale-wrapper {
-                    zoom: initial;
-                    transform: scale(0.58);
-                    -webkit-transform: scale(0.58);
-                    transform-origin: center center;
-                    -webkit-transform-origin: center center;
-                }
+                -webkit-transform-origin: center center;
             }
         }
         
