@@ -63,7 +63,6 @@
             -webkit-transform: scale(0.78);
             transform-origin: center center;
             -webkit-transform-origin: center center;
-            position: relative;
         }
         
         /* Responsive scaling for mobile - triggered when iframe is 390px or less */
@@ -76,21 +75,9 @@
             }
         }
         
-        /* Mobile standalone adjustments - using position instead of transform for iOS compatibility */
-        @supports (-webkit-touch-callout: none) {
-            /* iOS-specific: use position-based shift */
-            body.mobile-standalone .scale-wrapper {
-                position: relative;
-                top: -100px;
-            }
-        }
-        
-        @supports not (-webkit-touch-callout: none) {
-            /* Non-iOS: use transform-based shift */
-            body.mobile-standalone .scale-wrapper {
-                transform: scale(0.58) translateY(-100px);
-                -webkit-transform: scale(0.58) translateY(-100px);
-            }
+        /* Fallback for non-iOS mobile standalone (will be overridden by JS for iOS) */
+        body.mobile-standalone .scale-wrapper {
+            margin-top: -100px;
         }
         
         .gameboy {
@@ -913,8 +900,8 @@
                 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
                 const isIOSChrome = isIOS && /CriOS/.test(navigator.userAgent);
                 
-                // For debugging on actual device - check console on your iPhone
-                console.log('Mobile detection:', { 
+                // For debugging on actual device
+                console.log('🔍 Mobile detection:', { 
                     isInIframe, 
                     isMobile, 
                     viewportWidth,
@@ -922,17 +909,37 @@
                     docClientWidth: document.documentElement.clientWidth,
                     isIOS,
                     isIOSChrome,
-                    userAgent: navigator.userAgent 
+                    userAgent: navigator.userAgent.substring(0, 50) + '...'
                 });
                 
                 if (!isInIframe && isMobile) {
                     document.body.classList.add('mobile-standalone');
                     console.log('✅ Added mobile-standalone class');
                     
-                    // Force a reflow to ensure styles are applied (iOS fix)
+                    // For iOS devices, directly apply inline styles to ensure they work
+                    if (isIOS) {
+                        const scaleWrapper = document.querySelector('.scale-wrapper');
+                        if (scaleWrapper) {
+                            // Use margin-top for iOS (most reliable method)
+                            scaleWrapper.style.marginTop = '-120px';
+                            scaleWrapper.style.transform = 'scale(0.58)';
+                            scaleWrapper.style.webkitTransform = 'scale(0.58)';
+                            console.log('🍎 iOS detected: Applied inline styles to .scale-wrapper');
+                        }
+                    }
+                    
+                    // Force a reflow to ensure styles are applied
                     void document.body.offsetHeight;
                 } else {
                     document.body.classList.remove('mobile-standalone');
+                    
+                    // Remove inline styles if they were applied
+                    const scaleWrapper = document.querySelector('.scale-wrapper');
+                    if (scaleWrapper) {
+                        scaleWrapper.style.marginTop = '';
+                        scaleWrapper.style.transform = '';
+                        scaleWrapper.style.webkitTransform = '';
+                    }
                     console.log('❌ Removed mobile-standalone class');
                 }
             }
@@ -946,8 +953,9 @@
             // Also check on load to catch any timing issues
             window.addEventListener('load', checkAndApplyMobileStandalone);
             
-            // Extra check after a short delay for iOS
+            // Extra check after a short delay for iOS (address bar transitions)
             setTimeout(checkAndApplyMobileStandalone, 100);
+            setTimeout(checkAndApplyMobileStandalone, 500);
         })();
         
         // Game State - Made globally accessible for testing
