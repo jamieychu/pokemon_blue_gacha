@@ -75,11 +75,6 @@
             }
         }
         
-        /* Fallback for non-iOS mobile standalone (will be overridden by JS for iOS) */
-        body.mobile-standalone .scale-wrapper {
-            margin-top: -100px;
-        }
-        
         .gameboy {
             background: linear-gradient(145deg, #d4d4c8, #b8b8ac);
             border-radius: 20px 20px 60px 20px;
@@ -898,7 +893,6 @@
                 const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
                 const isMobile = viewportWidth <= 450;
                 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                const isIOSChrome = isIOS && /CriOS/.test(navigator.userAgent);
                 
                 // For debugging on actual device
                 console.log('🔍 Mobile detection:', { 
@@ -913,14 +907,20 @@
                     document.body.classList.add('mobile-standalone');
                     console.log('✅ Added mobile-standalone class');
                     
-                    // For iOS devices, apply margin-top WITHOUT touching transform
-                    // The transform is handled by CSS media query and should not be overridden
                     if (isIOS) {
+                        // iOS: Move the Exit button higher instead of moving Game Boy
+                        // This prevents affecting Game Boy's internal layout calculations
+                        const exitButton = document.querySelector('.exit-fullscreen-btn');
+                        if (exitButton) {
+                            exitButton.style.bottom = '160px';
+                            console.log('🍎 iOS: Moved Exit button higher (Game Boy unchanged)');
+                        }
+                    } else {
+                        // Non-iOS (Android): Can safely use margin-top on Game Boy
                         const scaleWrapper = document.querySelector('.scale-wrapper');
                         if (scaleWrapper) {
-                            // ONLY set margin-top, don't touch transform at all
-                            scaleWrapper.style.marginTop = '-120px';
-                            console.log('🍎 iOS detected: Applied marginTop to .scale-wrapper (transform untouched)');
+                            scaleWrapper.style.marginTop = '-100px';
+                            console.log('🤖 Android: Applied marginTop to Game Boy');
                         }
                     }
                     
@@ -929,11 +929,13 @@
                 } else {
                     document.body.classList.remove('mobile-standalone');
                     
-                    // Remove iOS-specific styles
+                    // Remove device-specific styles
+                    const exitButton = document.querySelector('.exit-fullscreen-btn');
                     const scaleWrapper = document.querySelector('.scale-wrapper');
-                    if (scaleWrapper && isIOS) {
-                        scaleWrapper.style.marginTop = '';
-                    }
+                    
+                    if (exitButton) exitButton.style.bottom = '';
+                    if (scaleWrapper) scaleWrapper.style.marginTop = '';
+                    
                     console.log('❌ Removed mobile-standalone class');
                 }
             }
