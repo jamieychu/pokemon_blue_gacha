@@ -908,15 +908,16 @@
                     console.log('✅ Added mobile-standalone class');
                     
                     if (isIOS) {
-                        // iOS: Move the Exit button higher instead of moving Game Boy
-                        // This prevents affecting Game Boy's internal layout calculations
+                        // iOS: Hide the Exit button entirely
+                        // iOS users can use browser's back button or swipe gesture
                         const exitButton = document.querySelector('.exit-fullscreen-btn');
                         if (exitButton) {
-                            exitButton.style.bottom = '160px';
-                            console.log('🍎 iOS: Moved Exit button higher (Game Boy unchanged)');
+                            exitButton.style.display = 'none';
+                            console.log('🍎 iOS: Hidden Exit button (use browser back button instead)');
                         }
+                        // Don't touch Game Boy position at all - keep it natural
                     } else {
-                        // Non-iOS (Android): Can safely use margin-top on Game Boy
+                        // Non-iOS (Android): Show button and move Game Boy up
                         const scaleWrapper = document.querySelector('.scale-wrapper');
                         if (scaleWrapper) {
                             scaleWrapper.style.marginTop = '-100px';
@@ -933,7 +934,10 @@
                     const exitButton = document.querySelector('.exit-fullscreen-btn');
                     const scaleWrapper = document.querySelector('.scale-wrapper');
                     
-                    if (exitButton) exitButton.style.bottom = '';
+                    if (exitButton) {
+                        exitButton.style.display = '';
+                        exitButton.style.bottom = '';
+                    }
                     if (scaleWrapper) scaleWrapper.style.marginTop = '';
                     
                     console.log('❌ Removed mobile-standalone class');
