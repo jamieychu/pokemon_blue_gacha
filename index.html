@@ -1018,7 +1018,7 @@
             
             <section class="tldr-box" aria-labelledby="tldr-heading">
                 <h2 class="tldr-title" id="tldr-heading">
-                    💡 TLDR
+                    💡 TL;DR
                 </h2>
                 <p class="tldr-content">
                     Trainer Recruitment is a new gacha feature in Pokemon Blue that lets players collect more playable characters, adding depth and replayability to the classic game.
@@ -1210,14 +1210,20 @@
             
             /* Mobile: Improve fullscreen button */
             .desktop-notice a {
-                font-size: 1.125rem !important; /* Larger text */
+                padding: 8px 16px !important; /* Original padding for proper spacing */
+                font-size: 0.9rem !important; /* Slightly larger than base but fits well */
+                display: inline-flex !important; /* Use flexbox for better alignment */
+                align-items: center !important; /* Vertically center content */
+                gap: 6px !important; /* Good spacing between text and icon */
+                line-height: 1.2 !important; /* Tight line height */
             }
             
             .desktop-notice a::after {
-                content: ' ⤢';
-                font-size: 2rem !important; /* 2x larger icon */
-                vertical-align: middle;
-                margin-left: 4px;
+                content: '⤢';
+                font-size: 1.3rem !important; /* Noticeably larger icon that fits proportionally */
+                display: inline-flex;
+                align-items: center;
+                line-height: 1;
             }
             
             /* Mobile: Fix pokeball aspect ratio in header */
