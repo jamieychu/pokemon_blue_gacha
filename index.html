@@ -224,16 +224,38 @@
             background: var(--primary-purple);
         }
         
-        /* Desktop Notice */
+        /* Desktop Notice - Mobile only fullscreen link */
         .desktop-notice {
             text-align: center;
-            color: var(--text-tertiary);
-            font-size: var(--text-xs);
             padding-top: var(--space-md);
             padding-bottom: 0;
             margin-bottom: var(--space-xl);
-            font-weight: 500;
+            display: block;
+        }
+        
+        .desktop-notice a {
+            display: inline-block;
+            color: #0f380f;
+            background: #e0d8a0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: var(--text-xs);
             letter-spacing: 0.5px;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .desktop-notice a:hover {
+            opacity: 0.85;
+        }
+        
+        /* Hide on desktop - only show on mobile/tablet */
+        @media (min-width: 769px) {
+            .desktop-notice {
+                display: none;
+            }
         }
         
         .pokeball-icon {
@@ -955,7 +977,7 @@
         <aside class="prototype-section" aria-label="Interactive prototype">
             <div class="prototype-wrapper">
                 <iframe 
-                    src="trainer_recruitment_scaled.html" 
+                    src="prototype/" 
                     title="Pokemon Trainer Recruitment Interactive Prototype"
                     aria-label="Interactive Game Boy prototype demonstrating the trainer recruitment feature"
                     scrolling="no">
@@ -964,8 +986,12 @@
         </aside>
         
         <main class="info-section" id="main-content" role="main">
-            <!-- Desktop Notice -->
-            <p class="desktop-notice">Best viewed on desktop</p>
+            <!-- Mobile-only fullscreen link -->
+            <p class="desktop-notice">
+                <a href="prototype/" target="_blank" rel="noopener noreferrer">
+                    View fullscreen →
+                </a>
+            </p>
             
             <!-- Header with two lines -->
             <div class="header-stacked">
