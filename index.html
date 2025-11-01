@@ -1113,5 +1113,155 @@
             border: 0;
         }
     </style>
+    
+    <!-- MOBILE-ONLY: Fullscreen Modal for Prototype -->
+    <div id="prototype-modal" class="prototype-modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <button class="modal-close" aria-label="Close fullscreen view">&times;</button>
+            <iframe 
+                id="modal-iframe"
+                src=""
+                title="Pokemon Trainer Recruitment Fullscreen Prototype"
+                scrolling="no">
+            </iframe>
+        </div>
+    </div>
+    
+    <style>
+        /* MOBILE-ONLY MODAL STYLES */
+        /* Desktop is completely unaffected - no changes to existing layout */
+        @media (max-width: 768px) {
+            .prototype-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10000;
+                display: none;
+            }
+            
+            .prototype-modal.active {
+                display: block;
+            }
+            
+            .modal-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+            }
+            
+            .modal-container {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                box-sizing: border-box;
+            }
+            
+            .modal-close {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: rgba(255, 255, 255, 0.9);
+                color: #333;
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                font-size: 28px;
+                line-height: 1;
+                cursor: pointer;
+                z-index: 10001;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+                transition: background 0.2s;
+            }
+            
+            .modal-close:active {
+                background: rgba(255, 255, 255, 0.7);
+            }
+            
+            .modal-container iframe {
+                width: 95vw;
+                height: 85vh;
+                max-width: 95vw;
+                max-height: 85vh;
+                border: none;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+                background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            }
+        }
+        
+        /* Desktop: Hide fullscreen link completely */
+        @media (min-width: 769px) {
+            .desktop-notice {
+                display: none !important;
+            }
+        }
+    </style>
+    
+    <script>
+        // MOBILE-ONLY: Modal functionality
+        // Desktop is completely unaffected
+        (function() {
+            const isMobile = window.innerWidth <= 768;
+            
+            if (!isMobile) {
+                return; // Exit immediately on desktop
+            }
+            
+            const modal = document.getElementById('prototype-modal');
+            const modalIframe = document.getElementById('modal-iframe');
+            const closeBtn = document.querySelector('.modal-close');
+            const fullscreenLink = document.querySelector('.desktop-notice a');
+            
+            if (!modal || !modalIframe || !closeBtn || !fullscreenLink) {
+                return;
+            }
+            
+            // Open modal on fullscreen link click
+            fullscreenLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                modalIframe.src = 'prototype/';
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            });
+            
+            // Close modal function
+            function closeModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scrolling
+                // Clear iframe src to stop any running scripts
+                setTimeout(() => {
+                    modalIframe.src = '';
+                }, 300);
+            }
+            
+            // Close on button click
+            closeBtn.addEventListener('click', closeModal);
+            
+            // Close on overlay click
+            document.querySelector('.modal-overlay').addEventListener('click', closeModal);
+            
+            // Close on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+        })();
+    </script>
 </body>
 </html>
