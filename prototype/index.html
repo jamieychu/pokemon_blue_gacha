@@ -17,13 +17,42 @@
         body {
             background: transparent;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             font-family: 'Press Start 2P', monospace;
-            padding: 0;
+            padding: 20px 0;
             margin: 0;
             overflow: hidden;
+        }
+        
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .exit-fullscreen-btn {
+            display: inline-block;
+            color: #0f380f;
+            background: #e0d8a0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            border: none;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .exit-fullscreen-btn:hover {
+            opacity: 0.85;
         }
         
         .scale-wrapper {
@@ -771,8 +800,9 @@
     </style>
 </head>
 <body>
-    <div class="scale-wrapper">
-    <div class="gameboy">
+    <div class="page-container">
+        <div class="scale-wrapper">
+        <div class="gameboy">
         <div class="screen-bezel">
             <div class="screen-label">◆ ◆ ◆ DOT MATRIX WITH STEREO SOUND ◆ ◆ ◆</div>
             <div class="battery-indicator"></div>
@@ -841,6 +871,11 @@
             <div class="phones-indent"></div>
         </div>
     </div>
+    </div>
+    
+    <a href="javascript:history.back()" class="exit-fullscreen-btn">
+        Exit fullscreen ✕
+    </a>
     </div>
 
     <script>
@@ -2543,7 +2578,9 @@
             
             // Check if trainer is collected (not locked)
             if (selectedItem.classList.contains('locked')) {
-                showNotification('TRAINER LOCKED', 'You have not recruited this trainer yet!', null);
+                showNotification('TRAINER LOCKED', 'You have not recruited this trainer yet!', () => {
+                    showTrainerRegistry(); // Return to registry instead of main menu
+                });
                 return;
             }
             
