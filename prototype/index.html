@@ -60,19 +60,36 @@
         
         .scale-wrapper {
             transform: scale(0.78);
+            -webkit-transform: scale(0.78);
             transform-origin: center center;
+            -webkit-transform-origin: center center;
+            position: relative;
         }
         
         /* Responsive scaling for mobile - triggered when iframe is 390px or less */
         @media (max-width: 450px) {
             .scale-wrapper {
                 transform: scale(0.58);
-            }
-            
-            /* Shift Game Boy up on mobile standalone to accommodate Exit button with spacing */
-            body.mobile-standalone .scale-wrapper {
-                transform: scale(0.58) translateY(-60px);
+                -webkit-transform: scale(0.58);
                 transform-origin: center center;
+                -webkit-transform-origin: center center;
+            }
+        }
+        
+        /* Mobile standalone adjustments - using position instead of transform for iOS compatibility */
+        @supports (-webkit-touch-callout: none) {
+            /* iOS-specific: use position-based shift */
+            body.mobile-standalone .scale-wrapper {
+                position: relative;
+                top: -100px;
+            }
+        }
+        
+        @supports not (-webkit-touch-callout: none) {
+            /* Non-iOS: use transform-based shift */
+            body.mobile-standalone .scale-wrapper {
+                transform: scale(0.58) translateY(-100px);
+                -webkit-transform: scale(0.58) translateY(-100px);
             }
         }
         
@@ -889,24 +906,48 @@
         // Detect if page is standalone (not in iframe) and on mobile
         // Only show Exit Fullscreen button in this case
         (function() {
-            const isInIframe = window.self !== window.top;
-            const isMobile = window.innerWidth <= 450;
-            
-            if (!isInIframe && isMobile) {
-                document.body.classList.add('mobile-standalone');
-            }
-            
-            // Re-check on window resize in case orientation changes
-            window.addEventListener('resize', function() {
+            function checkAndApplyMobileStandalone() {
                 const isInIframe = window.self !== window.top;
-                const isMobile = window.innerWidth <= 450;
+                const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+                const isMobile = viewportWidth <= 450;
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                const isIOSChrome = isIOS && /CriOS/.test(navigator.userAgent);
+                
+                // For debugging on actual device - check console on your iPhone
+                console.log('Mobile detection:', { 
+                    isInIframe, 
+                    isMobile, 
+                    viewportWidth,
+                    windowInnerWidth: window.innerWidth,
+                    docClientWidth: document.documentElement.clientWidth,
+                    isIOS,
+                    isIOSChrome,
+                    userAgent: navigator.userAgent 
+                });
                 
                 if (!isInIframe && isMobile) {
                     document.body.classList.add('mobile-standalone');
+                    console.log('✅ Added mobile-standalone class');
+                    
+                    // Force a reflow to ensure styles are applied (iOS fix)
+                    void document.body.offsetHeight;
                 } else {
                     document.body.classList.remove('mobile-standalone');
+                    console.log('❌ Removed mobile-standalone class');
                 }
-            });
+            }
+            
+            // Check immediately
+            checkAndApplyMobileStandalone();
+            
+            // Re-check on window resize in case orientation changes
+            window.addEventListener('resize', checkAndApplyMobileStandalone);
+            
+            // Also check on load to catch any timing issues
+            window.addEventListener('load', checkAndApplyMobileStandalone);
+            
+            // Extra check after a short delay for iOS
+            setTimeout(checkAndApplyMobileStandalone, 100);
         })();
         
         // Game State - Made globally accessible for testing
