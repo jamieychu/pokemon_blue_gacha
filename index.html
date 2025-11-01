@@ -251,17 +251,10 @@
             opacity: 0.85;
         }
         
-        /* Hide on desktop - only show on mobile/tablet OR height-constrained devices */
-        @media (min-width: 769px) and (min-height: 1200px) {
+        /* Hide on desktop - only show on mobile/tablet */
+        @media (min-width: 769px) {
             .desktop-notice {
                 display: none !important;
-            }
-        }
-        
-        /* Show on height-constrained devices even if wide (tablets, short screens) */
-        @media (max-height: 1199px) {
-            .desktop-notice {
-                display: block !important;
             }
         }
         
@@ -1260,8 +1253,8 @@
             }
         }
         
-        /* Desktop with sufficient height: Hide modal completely */
-        @media (min-width: 769px) and (min-height: 1200px) {
+        /* Desktop: Hide modal completely */
+        @media (min-width: 769px) {
             .prototype-modal {
                 display: none !important;
             }
@@ -1270,32 +1263,14 @@
                 display: none !important;
             }
         }
-        
-        /* Height-constrained devices: Keep modal available even on wider screens */
-        @media (max-height: 1199px) {
-            /* Modal stays available */
-            .prototype-modal {
-                display: block;
-            }
-        }
     </style>
     
     <script>
-        // MODAL FUNCTIONALITY: Show on mobile OR height-constrained devices (tablets, short screens)
+        // MOBILE-ONLY: Modal functionality (production version - no debug code)
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if device should have modal (mobile width OR insufficient height)
-            function shouldShowModal() {
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-                
-                // Show modal if:
-                // 1. Mobile width (≤ 768px), OR
-                // 2. Height-constrained (< 1200px) - catches all tablets, short screens
-                return width <= 768 || height < 1200;
-            }
+            const isMobile = window.innerWidth <= 768;
             
-            // Initialize only if modal should be shown
-            if (!shouldShowModal()) {
+            if (!isMobile) {
                 return;
             }
             
@@ -1363,19 +1338,6 @@
                 if (e.key === 'Escape' && modal.classList.contains('active')) {
                     closeModal();
                 }
-            });
-            
-            // Handle window resize (orientation changes, window resizing)
-            let resizeTimer;
-            window.addEventListener('resize', function() {
-                // Debounce resize events
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function() {
-                    // If modal is active and we switch to a size that shouldn't have modal, close it
-                    if (modal.classList.contains('active') && !shouldShowModal()) {
-                        closeModal();
-                    }
-                }, 250);
             });
         });
     </script>
