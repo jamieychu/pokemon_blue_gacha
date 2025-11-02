@@ -823,13 +823,15 @@
                 overflow: auto;
                 height: auto;
                 min-height: 100vh;
+                /* Enable smooth scrolling for browser bar dismissal */
+                -webkit-overflow-scrolling: touch;
             }
             
             .container {
                 flex-direction: column;
                 height: auto;
                 max-height: none;
-                min-height: 100vh;
+                /* Remove min-height to allow natural sizing and proper scrolling */
             }
             
             .prototype-section {
