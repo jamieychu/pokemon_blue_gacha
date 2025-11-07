@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Pokemon Blue Trainer Recruitment - A new gacha feature prototype for collecting playable characters">
-    <title>Pokemon Blue: Gotta Recruit 'Em All!</title>
+    <title>Pokemon Blue: Gotta Recruit 'Em All! - Trainer Recruitment Prototype</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Comic+Neue:wght@700&display=swap');
         
@@ -76,11 +76,6 @@
         /* Smooth scrolling for keyboard navigation */
         html {
             scroll-behavior: smooth;
-            /* Prevent auto-zoom on orientation change */
-            -webkit-text-size-adjust: 100%;
-            -moz-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-            text-size-adjust: 100%;
         }
         
         body {
@@ -256,8 +251,8 @@
             opacity: 0.85;
         }
         
-        /* Hide button on desktop two-column layout - show only on mobile stacked layout */
-        @media (min-width: 1025px) {
+        /* Hide on desktop - only show on mobile/tablet */
+        @media (min-width: 769px) {
             .desktop-notice {
                 display: none !important;
             }
@@ -659,54 +654,40 @@
             font-weight: 500;
         }
         
-        .documentation-link {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-sm);
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-dark) 100%);
-            color: var(--text-on-dark);
-            padding: var(--space-md) var(--space-xl);
-            border-radius: 50px;
+        /* TL;DR Documentation Button */
+        .tldr-button-container {
+            margin-top: 20px;
+        }
+        
+        .tldr-button-helper {
+            font-size: 13px;
+            color: #64748b;
+            margin: 0 0 12px 0;
+            text-align: left;
+        }
+        
+        .tldr-doc-button {
+            display: block;
+            width: 100%;
+            background: var(--primary-purple);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: 700;
-            font-size: var(--text-base);
-            margin-top: var(--space-xl);
-            transition: all var(--transition-base);
-            box-shadow: 0 6px 20px rgba(91, 79, 207, 0.4);
-            position: relative;
-            overflow: hidden;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+            transition: opacity 0.2s, transform 0.2s;
+            box-shadow: 0 2px 8px rgba(91, 79, 207, 0.3);
+            border: none;
+            cursor: pointer;
+            line-height: 1.4;
+            box-sizing: border-box;
         }
         
-        .documentation-link::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .documentation-link:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .documentation-link:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(91, 79, 207, 0.5);
-        }
-        
-        .documentation-link:focus {
-            outline-offset: 4px;
-        }
-        
-        .documentation-link span {
-            position: relative;
-            z-index: 1;
+        .tldr-doc-button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
         }
         
         /* Author Section Styles */
@@ -828,27 +809,25 @@
                 overflow: auto;
                 height: auto;
                 min-height: 100vh;
-                /* Enable smooth scrolling for browser bar dismissal */
-                -webkit-overflow-scrolling: touch;
             }
             
             .container {
                 flex-direction: column;
                 height: auto;
                 max-height: none;
-                /* Remove min-height to allow natural sizing and proper scrolling */
+                min-height: 100vh;
             }
             
             .prototype-section {
                 border-right: none;
                 border-bottom: 2px solid #e2e8f0;
-                /* Remove fixed vh heights - let content size naturally for body scroll */
+                min-height: 55vh;
+                max-height: 55vh;
                 padding: var(--space-md);
-                overflow: visible !important; /* Override base overflow: hidden */
             }
             
             .prototype-wrapper {
-                /* Remove vh constraint */
+                height: calc(55vh - 32px);
                 max-height: 720px;
                 overflow: hidden;
             }
@@ -862,10 +841,9 @@
             
             .info-section {
                 padding: var(--space-2xl) var(--space-xl);
-                /* Remove vh constraints to allow natural sizing and body scroll */
-                overflow-y: visible !important; /* Override base overflow-y: auto */
-                overflow-x: hidden;
-                height: auto; /* Override base height: 100% */
+                height: 45vh;
+                max-height: 45vh;
+                overflow-y: auto;
             }
             
             h1 {
@@ -950,10 +928,6 @@
             .tldr-box, .note-box, .tools-section {
                 border-width: 3px;
             }
-            
-            .documentation-link {
-                border: 2px solid var(--text-on-dark);
-            }
         }
         
         /* Print Styles */
@@ -1031,6 +1005,17 @@
                 <p class="tldr-content">
                     Trainer Recruitment is a new gacha feature in Pokemon Blue that lets players collect more playable characters, adding depth and replayability to the classic game.
                 </p>
+                <div class="tldr-button-container">
+                    <p class="tldr-button-helper">
+                        For details on Gacha Mechanics, Currency & Progression:
+                    </p>
+                    <a href="https://jamieychu.notion.site/" 
+                       class="tldr-doc-button" 
+                       aria-label="View full feature documentation (opens in new window)"
+                       target="_blank">
+                        📄 View Full Documentation →
+                    </a>
+                </div>
             </section>
             
             <section aria-labelledby="features-heading">
@@ -1086,13 +1071,6 @@
                     Try clicking the Pokeball icon above for a fun surprise! 🎉
                 </p>
             </section>
-            
-            <a href="https://jamieychu.notion.site/" 
-               class="documentation-link" 
-               aria-label="View full feature documentation (opens in new window)"
-               target="_blank">
-                <span>📄 View Full Feature Documentation</span>
-            </a>
             
             <!-- Author Credit -->
             <div class="author-section">
@@ -1261,8 +1239,8 @@
             }
         }
         
-        /* Desktop two-column layout: Hide modal completely */
-        @media (min-width: 1025px) {
+        /* Desktop: Hide modal completely */
+        @media (min-width: 769px) {
             .prototype-modal {
                 display: none !important;
             }
@@ -1274,19 +1252,11 @@
     </style>
     
     <script>
-        // MODAL FUNCTIONALITY: Show on stacked layout (mobile/tablet ≤1024px)
+        // MOBILE-ONLY: Modal functionality (production version - no debug code)
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if device is in stacked layout (matches CSS breakpoint at 1024px)
-            function shouldShowModal() {
-                const width = window.innerWidth;
-                
-                // Show modal only in stacked layout (≤ 1024px)
-                // This matches the CSS breakpoint where layout switches to column
-                return width <= 1024;
-            }
+            const isMobile = window.innerWidth <= 768;
             
-            // Initialize only if modal should be shown
-            if (!shouldShowModal()) {
+            if (!isMobile) {
                 return;
             }
             
@@ -1354,19 +1324,6 @@
                 if (e.key === 'Escape' && modal.classList.contains('active')) {
                     closeModal();
                 }
-            });
-            
-            // Handle window resize (orientation changes, window resizing)
-            let resizeTimer;
-            window.addEventListener('resize', function() {
-                // Debounce resize events
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function() {
-                    // If modal is active and we switch to a size that shouldn't have modal, close it
-                    if (modal.classList.contains('active') && !shouldShowModal()) {
-                        closeModal();
-                    }
-                }, 250);
             });
         });
     </script>
